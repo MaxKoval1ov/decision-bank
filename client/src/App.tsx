@@ -1,35 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {
+    Route,
+    createBrowserRouter,
+    createRoutesFromElements,
+    defer,
+} from 'react-router-dom';
 
-function App() {
-  const [count, setCount] = useState(0)
+// import './styles.css';
+import { AuthLayout } from '@components/authLayout';
+import { ProtectedLayout } from '@components/protecteLayout';
+import { HomePage } from '@pages/home.page';
+import { LoginPage } from '@pages/login.page';
+import { ProfilePage } from '@pages/profile.page';
+import { SettingsPage } from '@pages/settings.page';
+import { HomeLayout } from '@components/homelayout';
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+// ideally this would be an API call to server to get logged in user data
 
-export default App
+const getUserData = () =>
+    new Promise((resolve) =>
+        setTimeout(() => {
+            const user = window.localStorage.getItem('user');
+            resolve(user);
+        }, 3000),
+    );
+
+// for error
+// const getUserData = () =>
+//   new Promise((resolve, reject) =>
+//     setTimeout(() => {
+//       reject("Error");
+//     }, 3000)
+//   );
+
+export const router = createBrowserRouter(
+    createRoutesFromElements(
+        <Route
+            element={<AuthLayout />}
+            loader={() => defer({ userPromise: getUserData() })}
+        >
+            <Route element={<HomeLayout />}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/login" element={<LoginPage />} />
+            </Route>
+
+            <Route path="/dashboard" element={<ProtectedLayout />}>
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="settings" element={<SettingsPage />} />
+            </Route>
+        </Route>,
+    ),
+);

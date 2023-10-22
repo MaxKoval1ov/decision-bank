@@ -1,13 +1,20 @@
+import { ThemeProvider, createTheme } from '@mui/material';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
+import { RouterProvider } from 'react-router-dom';
 import './index.css';
-import { BASE_API_URL } from './config/index.ts';
+import { router } from './App';
 
-console.log(BASE_API_URL);
+const theme = createTheme({
+    palette: {
+        primary: { main: '#3a34d2' },
+    },
+});
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <App />
+        <ThemeProvider theme={theme}>
+            <RouterProvider router={router} />
+        </ThemeProvider>
     </React.StrictMode>,
 );
