@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocalStorage } from './useLocalStorage.hook';
 
 export interface IUserData {
-    email: string;
-    password: string;
+    username: string;
 }
 
 export interface IAuthProvider {

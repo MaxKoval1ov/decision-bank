@@ -2,9 +2,10 @@ const storagePrefix = 'baseApi_';
 
 export const storage = {
     getAccessToken: () => {
-        return window.localStorage.getItem(
+        const accessToken = window.localStorage.getItem(
             `${storagePrefix}accessToken`,
-        ) as string;
+        );
+        return accessToken ? JSON.parse(accessToken) : null;
     },
     setAccessToken: (token: string) => {
         window.localStorage.setItem(
@@ -17,9 +18,10 @@ export const storage = {
         window.localStorage.removeItem(`${storagePrefix}accessToken`);
     },
     getRefreshToken: () => {
-        return window.localStorage.getItem(
+        const refreshToken = window.localStorage.getItem(
             `${storagePrefix}refreshToken`,
-        ) as string;
+        );
+        return refreshToken ? JSON.parse(refreshToken) : null;
     },
     setRefreshToken: (token: string) => {
         window.localStorage.setItem(

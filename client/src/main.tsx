@@ -7,7 +7,7 @@ import { router } from './App';
 
 const theme = createTheme({
     palette: {
-        primary: { main: '#3a34d2' },
+        primary: { main: '#6CDE4F' },
     },
 });
 

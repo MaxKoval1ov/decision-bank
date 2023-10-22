@@ -49,7 +49,7 @@ export const Header = ({ pages }: IHeader) => {
                         component="div"
                         sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
                     >
-                        React Router Auth
+                        Decision bank
                     </Typography>
 
                     <Box
@@ -118,7 +118,7 @@ export const Header = ({ pages }: IHeader) => {
                             display: { xs: 'flex', md: 'none' },
                         }}
                     >
-                        React Router Auth
+                        Decision bank
                     </Typography>
                     <Box
                         sx={{
