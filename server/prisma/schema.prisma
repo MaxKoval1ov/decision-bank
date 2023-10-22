@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  username    String   @unique
+  password    String
+  hasDebt     Boolean   // Indicates if the user has a debt
+  loans       Loan[]
+  refreshTokens Token[] // Establish a one-to-many relationship with RefreshToken
+}
+
+model Loan {
+  id           Int      @id @default(autoincrement())
+  loanAmount   Int
+  loanPeriod   Int
+  creditScore  Float
+  decision     String   // "positive" or "negative"
+  
+  // Define the relationship with the User model
+  userId       Int
+  user         User @relation(fields: [userId], references: [id])
+}
+
+// Define constraints and validations
+enum Decision {
+  POSITIVE
+  NEGATIVE
+}
+
+// Validation for loan amount and period
+// The validation for creditScore is performed in your application logic
+model LoanValidation {
+  id Int @id @default(autoincrement())
+  maxLoanAmount Int
+  minLoanAmount Int
+  maxLoanPeriod Int
+  minLoanPeriod Int
+}
+
+
+model Token {
+  id           Int      @id @default(autoincrement())
+  refreshToken String
+  userId       Int
+  user         User @relation(fields: [userId], references: [id])
+}
