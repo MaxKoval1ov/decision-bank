@@ -7,30 +7,28 @@ import {
 
 // import './styles.css';
 import { AuthLayout } from '@components/authLayout';
+import { HomeLayout } from '@components/homelayout';
 import { ProtectedLayout } from '@components/protecteLayout';
 import { HomePage } from '@pages/home.page';
 import { LoginPage } from '@pages/login.page';
 import { ProfilePage } from '@pages/profile.page';
 import { SettingsPage } from '@pages/settings.page';
-import { HomeLayout } from '@components/homelayout';
-
-// ideally this would be an API call to server to get logged in user data
 
 const getUserData = () =>
     new Promise((resolve) =>
         setTimeout(() => {
+            // const token = storage.getAccessToken();
+
+            // if (!token) reject('Smth wrong');
+
+            // resolve({ userPromise: jwt.decode(token) });
+
+            // const payload = d.resolve(user);
+
             const user = window.localStorage.getItem('user');
             resolve(user);
-        }, 3000),
+        }, 0),
     );
-
-// for error
-// const getUserData = () =>
-//   new Promise((resolve, reject) =>
-//     setTimeout(() => {
-//       reject("Error");
-//     }, 3000)
-//   );
 
 export const router = createBrowserRouter(
     createRoutesFromElements(

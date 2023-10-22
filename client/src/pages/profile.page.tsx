@@ -1,6 +1,9 @@
+import { useAuth } from '@hooks/userAuth.hook';
 import Person from '@mui/icons-material/Person';
 import { BasicPage } from './basic.page';
 
 export const ProfilePage = () => {
-    return <BasicPage title="Profile Page" icon={<Person />} />;
+    const { user } = useAuth();
+
+    return <BasicPage title={`${user.username} Profile Page`} icon={<Person />} />;
 };

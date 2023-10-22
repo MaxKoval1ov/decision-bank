@@ -1,25 +1,46 @@
+import { API_BASE_URL } from '@config';
 import { useAuth } from '@hooks/userAuth.hook';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { Link as RouterLink } from 'react-router-dom';
+import { LoginResponseDto } from '@types';
+import { storage } from '@utils/storage';
+import axios from 'axios';
+import jwt_decode from 'jwt-decode';
+import { UserModel } from 'models/user.model';
 
 export const LoginPage = () => {
     const { login } = useAuth();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget) as any;
-        login({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+
+        // Log in and get the response
+        const response = await axios.post<LoginResponseDto>(
+            `${API_BASE_URL}/auth/login`,
+            {
+                username: data.get('username'),
+                password: data.get('password'),
+            },
+        );
+
+        if (response.data.accessToken) {
+            // Save the response, including accessToken and refreshToken
+            storage.setAccessToken(response.data.accessToken);
+            storage.setRefreshToken(response.data.refreshToken);
+
+
+            const user = jwt_decode(response.data.accessToken) as UserModel;
+
+            if (user && user.username) {
+                login({ username: user.username });
+            }
+        }
     };
 
     return (
@@ -49,9 +70,9 @@ export const LoginPage = () => {
                         required
                         fullWidth
                         id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
+                        label="User's Name"
+                        name="username"
+                        autoComplete="username"
                         autoFocus
                     />
                     <TextField
@@ -72,15 +93,6 @@ export const LoginPage = () => {
                     >
                         Login In
                     </Button>
-                    <Grid container>
-                        <Grid item>
-                            <RouterLink to="/register">
-                                <Link href="#" variant="body2">
-                                    {"Don't have an account? Sign Up"}
-                                </Link>
-                            </RouterLink>
-                        </Grid>
-                    </Grid>
                 </Box>
             </Box>
         </Container>
