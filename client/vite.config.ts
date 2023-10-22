@@ -15,6 +15,8 @@ export default defineConfig({
             '@utils': '/src/utils',
             '@assets': '/src/assets',
             '@pages': '/src/pages',
+            '@components': '/src/components',
+            '@hooks': '/src/hooks'
         },
     },
     preview: { port: 3001 },

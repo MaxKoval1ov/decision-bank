@@ -15,10 +15,11 @@
         "jsx": "react-jsx",
 
         /* Linting */
-        "strict": true,
+        "strict": false,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": false,
         "baseUrl": "./src",
         "paths": {
             "@config": ["config"],
@@ -32,7 +33,9 @@
             "@utils": ["utils"],
             "@utils/*": ["utils/*"],
             "@assets/*": ["assets/*"],
-            "@pages/*": ["pages/*"]
+            "@pages/*": ["pages/*"],
+            "@components/*": ["components/*"],
+            "@hooks/*": ["hooks/*"]
         }
     },
     "include": ["src"],
