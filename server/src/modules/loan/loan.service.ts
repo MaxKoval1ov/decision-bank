@@ -1,52 +1,87 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { PrismaService } from 'src/utils/prisma.service';
-
-const personalCodes: { [key: string]: string } = {
-  '49002010965': 'debt',
-  '49002010976': 'segment 1',
-  '49002010987': 'segment 2',
-  '49002010998': 'segment 3',
-};
-
-const creditModifiers: { [key: string]: number } = {
-  'segment 1': 100,
-  'segment 2': 300,
-  'segment 3': 1000,
-};
+import { SuggestLoanDto } from './dto/suggest-loan.dto';
+import { unavailableSegments } from './constansts/unavailable-segments';
+import { ConfigHelperService } from '../config/config.service';
 
 @Injectable()
 export class LoanService {
-  constructor(private readonly prismaService: PrismaService) {}
-  createDecision(
-    personalCode: string,
-    loanAmount: number,
-    loanPeriod: number,
-  ): [string, number] {
-    // Check if the personal code is in the database
-    if (personalCode in personalCodes) {
-      if (personalCodes[personalCode] === 'debt') {
-        return ['negative', 0]; // Person has debt, so no loan is approved.
-      }
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly configService: ConfigHelperService,
+  ) {}
 
-      // Calculate the credit modifier based on the segment
-      const segment = personalCodes[personalCode];
-      const creditModifier = creditModifiers[segment] || 0;
-
-      // Determine the maximum loan amount based on credit modifier
-      const maxLoanAmount = loanAmount + creditModifier;
-
-      // If the requested amount is higher than the maximum, use the maximum
-      if (loanAmount > maxLoanAmount) {
-        return ['positive', maxLoanAmount];
-      } else {
-        return ['positive', loanAmount];
-      }
-    } else {
-      return ['negative', 0]; // Unknown personal code, cannot approve a loan.
-    }
+  async calculateCreditScore(
+    user: {
+      segment: {
+        id: number;
+        creditModifier: number;
+        segmentIdentifier: string;
+      };
+    } & {
+      id: number;
+      username: string;
+      password: string;
+      segmentId: number;
+    },
+    { loanPeriod, amount }: SuggestLoanDto,
+  ) {
+    return (user.segment.creditModifier / amount) * loanPeriod;
   }
 
-  test() {
-    return this.prismaService.loan.findMany();
+  async suggestLoan(user: User, suggestLoanDto: SuggestLoanDto) {
+    const userWithSegment = await this.prismaService.user.findUnique({
+      where: {
+        id: user.id,
+      },
+      include: { segment: true },
+    });
+
+    if (!userWithSegment)
+      throw new ForbiddenException('Something wrong with user');
+
+    if (unavailableSegments.includes(userWithSegment.segment.segmentIdentifier))
+      throw new ForbiddenException('User has a debt');
+
+    const [loanValidations, creditScore] = await Promise.all([
+      await this.prismaService.loanValidation.findMany({
+        where: {
+          minLoanAmount: {
+            lte: suggestLoanDto.amount,
+          },
+          minLoanPeriod: {
+            lte: suggestLoanDto.loanPeriod,
+          },
+          maxLoanPeriod: {
+            gte: suggestLoanDto.loanPeriod,
+          },
+        },
+      }),
+      this.calculateCreditScore(userWithSegment, suggestLoanDto),
+    ]);
+
+    if (creditScore < this.configService.getMinCreditScore())
+      throw new ForbiddenException('User has low credit score');
+
+    if (!loanValidations.length)
+      throw new ForbiddenException('No available loans');
+
+    return {
+      maxAmount: Math.max(
+        ...loanValidations.map(({ maxLoanAmount }) => maxLoanAmount),
+      ),
+      minAmount: Math.max(
+        ...loanValidations.map(({ minLoanAmount }) => minLoanAmount),
+      ),
+    };
+  }
+
+  async getUserLoans(user: User) {
+    return this.prismaService.loan.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
   }
 }

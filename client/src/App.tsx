@@ -12,7 +12,7 @@ import { ProtectedLayout } from '@components/protecteLayout';
 import { HomePage } from '@pages/home.page';
 import { LoginPage } from '@pages/login.page';
 import { ProfilePage } from '@pages/profile.page';
-import { SettingsPage } from '@pages/settings.page';
+import { LoanPage } from '@pages/loan.page';
 
 const getUserData = () =>
     new Promise((resolve) =>
@@ -43,7 +43,7 @@ export const router = createBrowserRouter(
 
             <Route path="/dashboard" element={<ProtectedLayout />}>
                 <Route path="profile" element={<ProfilePage />} />
-                <Route path="settings" element={<SettingsPage />} />
+                <Route path="settings" element={<LoanPage />} />
             </Route>
         </Route>,
     ),

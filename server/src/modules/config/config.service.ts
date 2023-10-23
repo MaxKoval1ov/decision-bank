@@ -10,8 +10,6 @@ export class ConfigHelperService {
   }
 
   getAccessTokenExpirationTime(): number {
-    console.log(this.configService.get('REFRESH_TOKEN_TIME'));
-
     return Number(this.configService.get('ACCESS_TOKEN_TIME'));
   }
 
@@ -20,7 +18,10 @@ export class ConfigHelperService {
   }
 
   getRefreshTokenExpirationTime(): number {
-    console.log(this.configService.get('REFRESH_TOKEN_TIME'));
     return Number(this.configService.get('REFRESH_TOKEN_TIME'));
+  }
+
+  getMinCreditScore(): number {
+    return Number(this.configService.get('MIN_CREDIT_SCORE'));
   }
 }
