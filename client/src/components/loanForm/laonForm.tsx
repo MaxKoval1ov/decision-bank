@@ -4,31 +4,45 @@ import Slider from '@mui/material/Slider';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { loansService } from '@services/loans.service';
-import { useState } from 'react';
-import './loanForm.css';
 import { useNavigate } from 'react-router-dom';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
 
-const LoanForm = () => {
+import './loanForm.css';
+
+interface LoanData {
+    loanPeriod: number;
+    amount: number;
+}
+
+interface LoanResult {
+    maxAmount: number;
+    creditScore: number;
+    suggestion?: string;
+    loanPeriod: number;
+}
+
+const LoanForm: React.FC = () => {
     const navigate = useNavigate();
 
-    const [loanData, setLoanData] = useState({
+    const [loanData, setLoanData] = useState<LoanData>({
         loanPeriod: 12,
         amount: 2000,
     });
 
-    const [result, setResult] = useState(null);
-    const [error, setError] = useState(null);
+    const [result, setResult] = useState<LoanResult | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleInputChange = (event) => {
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-        setLoanData({ ...loanData, [name]: value });
+        setLoanData({ ...loanData, [name]: Number(value) });
     };
 
-    const handleSliderChange = (name) => (event, value) => {
-        setLoanData({ ...loanData, [name]: value });
-    };
+    const handleSliderChange =
+        (name: string) => (_event: unknown, value: number | number[]) => {
+            setLoanData({ ...loanData, [name]: Number(value) });
+        };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setError(null);
         setResult(null);
@@ -37,20 +51,20 @@ const LoanForm = () => {
             const result = await loansService.suggestUserLoan(loanData);
             setResult({ ...result, loanPeriod: loanData.loanPeriod });
         } catch (error) {
-            setError(error.response.data.message);
+            setError(error.response?.data?.message);
         }
     };
 
     const handleCreate = async () => {
         loansService
             .createUserLoan({
-                loanAmount: result.maxAmount,
-                creditScore: result.creditScore,
-                loanPeriod: result.loanPeriod,
+                loanAmount: result!.maxAmount,
+                creditScore: result!.creditScore,
+                loanPeriod: result!.loanPeriod,
             })
             .then(() => navigate('../profile'))
             .catch(() => {
-                // console.log(err);
+                // Handle the error here
             });
     };
 

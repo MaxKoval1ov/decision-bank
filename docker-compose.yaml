@@ -1,9 +1,55 @@
+version: '3'
 services:
- 
-  db:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: example
-    volumes:
- - pgdata:/var/lib/postgresql/data
+    postgres:
+        image: postgres:13
+        container_name: my-postgres
+        environment:
+            POSTGRES_DB: mydatabase
+            POSTGRES_USER: myuser
+            POSTGRES_PASSWORD: mypassword
+        ports:
+            - '5432:5432'
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+
+    server:
+        build:
+            context: ./server
+            dockerfile: Dockerfile
+        container_name: my-server
+        ports:
+            - '3000:3000'
+        depends_on:
+            - postgres
+        environment:
+            POSTGRES_HOST: postgres
+            POSTGRES_PORT: 5432
+            POSTGRES_DB: mydatabase
+            POSTGRES_USER: myuser
+            POSTGRES_PASSWORD: mypassword
+            DATABASE_URL: 'postgresql://myuser:mypassword@postgres:5432/bank-db?schema=SCHEMA'
+            ACCESS_TOKEN_SECRET: accessSecret
+            ACCESS_TOKEN_TIME: 3600000
+            REFRESH_TOKEN_SECRET: refreshSecret
+            REFRESH_TOKEN_TIME: 7200000
+            MIN_CREDIT_SCORE: 1
+
+        command: ['/bin/sh', 'init.sh'] # Set the command to run the init.sh script
+
+    client:
+        build:
+            context: ./client
+            dockerfile: Dockerfile
+        container_name: my-client
+        ports:
+            - '3001:3001'
+        depends_on:
+            - postgres
+            - server
+        environment:
+            SERVER_HOST: my-server
+            SERVER_PORT: 3000
+            VITE_API_BASE_URL: http://my-server:3000
+
+volumes:
+    postgres_data:

@@ -19,5 +19,5 @@ export default defineConfig({
             '@hooks': '/src/hooks'
         },
     },
-    preview: { port: 3001 },
+    preview: { port: 3001, host:true },
 });
