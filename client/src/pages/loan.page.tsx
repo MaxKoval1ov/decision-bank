@@ -1,6 +1,11 @@
-import Settings from '@mui/icons-material/Settings';
+import LoanForm from '@components/loanForm/laonForm';
 import { BasicPage } from './basic.page';
 
 export const LoanPage = () => {
-    return <BasicPage title="Loan Page" icon={<Settings />} />;
+    return (
+        <>
+            <BasicPage title="Loan Page" icon={null} />
+            <LoanForm />
+        </>
+    );
 };

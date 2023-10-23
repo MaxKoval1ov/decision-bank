@@ -1,9 +1,11 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Decision, User } from '@prisma/client';
 import { PrismaService } from 'src/utils/prisma.service';
 import { SuggestLoanDto } from './dto/suggest-loan.dto';
 import { unavailableSegments } from './constansts/unavailable-segments';
 import { ConfigHelperService } from '../config/config.service';
+import { SuggestLoanResponse } from './types/suggest-loand.response';
+import { CreateLoanDto } from './dto/create-loan.dto';
 
 @Injectable()
 export class LoanService {
@@ -30,7 +32,10 @@ export class LoanService {
     return (user.segment.creditModifier / amount) * loanPeriod;
   }
 
-  async suggestLoan(user: User, suggestLoanDto: SuggestLoanDto) {
+  async suggestLoan(
+    user: User,
+    suggestLoanDto: SuggestLoanDto,
+  ): Promise<SuggestLoanResponse> {
     const userWithSegment = await this.prismaService.user.findUnique({
       where: {
         id: user.id,
@@ -74,6 +79,7 @@ export class LoanService {
       minAmount: Math.max(
         ...loanValidations.map(({ minLoanAmount }) => minLoanAmount),
       ),
+      creditScore,
     };
   }
 
@@ -81,6 +87,16 @@ export class LoanService {
     return this.prismaService.loan.findMany({
       where: {
         userId: user.id,
+      },
+    });
+  }
+
+  async createUserLoan(user: User, createUserLoanDto: CreateLoanDto) {
+    return this.prismaService.loan.create({
+      data: {
+        userId: user.id,
+        ...createUserLoanDto,
+        decision: Decision.POSITIVE,
       },
     });
   }

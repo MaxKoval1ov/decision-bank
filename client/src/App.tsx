@@ -43,7 +43,7 @@ export const router = createBrowserRouter(
 
             <Route path="/dashboard" element={<ProtectedLayout />}>
                 <Route path="profile" element={<ProfilePage />} />
-                <Route path="settings" element={<LoanPage />} />
+                <Route path="loan" element={<LoanPage />} />
             </Route>
         </Route>,
     ),

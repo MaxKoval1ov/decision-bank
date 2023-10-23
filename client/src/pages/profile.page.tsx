@@ -1,9 +1,4 @@
 import { useAuth } from '@hooks/userAuth.hook';
-import Person from '@mui/icons-material/Person';
-import { BasicPage } from './basic.page';
-import { useEffect, useState } from 'react';
-import { loansService } from '@services/loans.service';
-import { LoanResponse } from 'types/loan.response';
 import {
     Paper,
     Table,
@@ -13,6 +8,10 @@ import {
     TableHead,
     TableRow,
 } from '@mui/material';
+import { loansService } from '@services/loans.service';
+import { useEffect, useState } from 'react';
+import { LoanResponse } from 'types/loan.response';
+import { BasicPage } from './basic.page';
 
 export const ProfilePage = () => {
     const { user } = useAuth();
@@ -26,10 +25,7 @@ export const ProfilePage = () => {
 
     return (
         <>
-            <BasicPage
-                title={`${user.username} Profile Page`}
-                icon={<Person />}
-            />
+            <BasicPage title={`${user.username} Profile Page`} icon={null} />
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
