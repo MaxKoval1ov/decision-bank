@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { join, resolve } from 'path';
+import { join } from 'path';
 import { cwd } from 'process';
 import { ConfigHelperService } from './config.service';
-
-console.log(resolve(cwd(), './env'));
 
 @Module({
   imports: [

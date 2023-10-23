@@ -4,10 +4,11 @@ import { redirect } from 'react-router-dom';
 import { API_BASE_URL } from '@config';
 import { authService } from '@services/auth/auth.service';
 import { storage } from '@utils/storage';
+import { CustomAxiosInstance } from 'interfaces/custom-axios';
 
 export const axios = Axios.create({
     baseURL: API_BASE_URL,
-});
+}) as CustomAxiosInstance;
 
 axios.interceptors.request.use(
     (config) => {
@@ -27,8 +28,8 @@ axios.interceptors.request.use(
 );
 
 axios.interceptors.response.use(
-    (response) => {
-        return response;
+    ({ data }) => {
+        return data;
     },
     async (error: AxiosError) => {
         const originalRequest = error.config;

@@ -7,11 +7,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Segment {
+  id     Int    @id @default(autoincrement())
+  users  User[] @relation()
+  creditModifier Float
+  segmentIdentifier String @unique
+}
+
 model User {
   id          Int      @id @default(autoincrement())
   username    String   @unique
   password    String
-  hasDebt     Boolean   // Indicates if the user has a debt
+  segment      Segment   @relation(fields: [segmentId], references: [id])
+  segmentId    Int
   loans       Loan[]
   refreshTokens Token[] // Establish a one-to-many relationship with RefreshToken
 }
@@ -21,7 +29,7 @@ model Loan {
   loanAmount   Int
   loanPeriod   Int
   creditScore  Float
-  decision     String   // "positive" or "negative"
+  decision     Decision   // "positive" or "negative"
   
   // Define the relationship with the User model
   userId       Int
