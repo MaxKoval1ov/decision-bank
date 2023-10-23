@@ -5,6 +5,7 @@ import { LoanService } from './loan.service';
 import { UserReq } from 'src/decorators/user.decorator';
 import { User } from '@prisma/client';
 import { SuggestLoanDto } from './dto/suggest-loan.dto';
+import { CreateLoanDto } from './dto/create-loan.dto';
 
 @ApiTags('loan')
 @ApiBearerAuth()
@@ -26,8 +27,11 @@ export class LoanController {
     return this.loanService.suggestLoan(user, suggestLoanDto);
   }
 
-  // @Post()
-  // async createLoan() {
-  //   return this.loanService.createLoan();
-  // }
+  @Post()
+  async createLoan(
+    @UserReq() user: User,
+    @Body() createLoanDto: CreateLoanDto,
+  ) {
+    return this.loanService.createUserLoan(user, createLoanDto);
+  }
 }

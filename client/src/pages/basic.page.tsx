@@ -19,7 +19,11 @@ export const BasicPage = ({ title, icon }: IBasicPage) => {
                     alignItems: 'center',
                 }}
             >
-                <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>{icon}</Avatar>
+                {icon && (
+                    <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
+                        {icon}
+                    </Avatar>
+                )}
                 <Typography component="h1" variant="h5">
                     {title}
                 </Typography>

@@ -1,0 +1,20 @@
+.loan-form-wrapper {
+    margin-top: 2%;
+    padding: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 16px;
+}
+
+/* Apply styles to the result block */
+.result-block {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 16px;
+    margin-top: 16px;
+}
+
+/* Apply styles to the result details */
+.result-details {
+    margin-top: 8px;
+}

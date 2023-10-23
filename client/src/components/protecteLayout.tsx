@@ -14,7 +14,7 @@ export const ProtectedLayout = () => {
         <div>
             <Header
                 pages={[
-                    { label: 'Settings', path: 'settings' },
+                    { label: 'Loan', path: 'loan' },
                     { label: 'Profile', path: 'profile' },
                 ]}
             />
